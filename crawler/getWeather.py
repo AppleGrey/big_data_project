@@ -15,10 +15,9 @@ with open('beijing.csv', 'a', newline='') as file:
     for year in range(2017, 2024):
         for month in range(1, 13):
             url = "http://www.tianqihoubao.com/lishi/beijing/month/{}.html".format(str(year) + str(month).zfill(2))
+            logging.info("-网页加载中")
             try:
-                logging.info("-网页加载中")
                 resp = requests.get(url)
-                logging.info("-网页加载成功")
                 # print(resp)
                 pass
             except Exception as e:
@@ -27,6 +26,7 @@ with open('beijing.csv', 'a', newline='') as file:
                 time.sleep(10)
                 resp = requests.get(url)
                 pass
+            logging.info("-网页加载成功")
             html = resp.content.decode('gbk')
 
             soup = BeautifulSoup(html, 'html.parser')
