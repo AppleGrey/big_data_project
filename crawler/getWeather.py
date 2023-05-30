@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 import csv
 import time
+import random
 
 with open('beijing.csv', 'a', newline='') as file:
     writer = csv.writer(file)
@@ -45,4 +45,8 @@ with open('beijing.csv', 'a', newline='') as file:
             # l = [dates, conditions, temp]
             # writer.writerow(l)
             print(str(year)+str(month).zfill(2)+"爬取成功")
+
+            if month%3==0 :
+                x = random.randint(3, 6)
+                time.sleep(x)
 
