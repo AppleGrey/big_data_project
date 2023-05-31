@@ -11,6 +11,7 @@ df["日期"] = df["日期"].str.split(' ').str[0]
 df["日期"] = pd.to_datetime(df["日期"], errors='coerce')
 
 # 清洗无效数据
+df = df[df["人数"].str.len() < 10]
 df['人数'] = df['人数'].str.extract(r'(\d+\.\d+)')
 
 # 增加周几的一列

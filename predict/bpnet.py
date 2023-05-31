@@ -15,6 +15,9 @@ df = pd.read_csv('result.csv')
 x = df[['最高气温', '最低气温']].values
 y = df[['人数']].values
 
+print(min(y))
+print(max(y))
+
 # 数据归一化
 x_scaler = MinMaxScaler(feature_range=(-1, 1))
 y_scaler = MinMaxScaler(feature_range=(-1, 1))
@@ -32,7 +35,7 @@ optimizer = Adam(lr=0.0001)
 model.compile(optimizer=optimizer, loss='mse')
 
 # 训练模型
-history = model.fit(x, y, epochs=100, batch_size=64)
+history = model.fit(x, y, epochs=1000, batch_size=64)
 
 # 评估模型
 mse = model.evaluate(x, y)
