@@ -4,32 +4,37 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense
 from keras import backend as K
+from keras.optimizers import SGD
+
+from predict.bpnet import optimizer
 
 # 读取数据
-data = pd.read_excel('dataset.xls')
+# data = pd.read_excel('dataset.xls')
+data = pd.read_csv("result.csv")
 
 # 将日期作为索引，并将其转化为时间序列
 data = data.set_index(pd.to_datetime(data['日期']))
 
-# 按照时间顺序进行排序
-data = data.sort_index()
+# # 按照时间顺序进行排序
+# data = data.sort_index()
 
 # 对天气情况进行编码
-data['天气情况'] = pd.factorize(data['天气情况'])[0]
+data['天气'] = pd.factorize(data['天气'])[0]
 
-# 将是否为假期转化为0和1
-data['是否为假期'] = data['是否为假期'].apply(lambda x: 1 if x == '是' else 0)
+# # 将是否为假期转化为0和1
+# data['是否为假期'] = data['是否为假期'].apply(lambda x: 1 if x == '是' else 0)
 
 # 将地铁每日人流量作为输出变量
-y = data['地铁每日人流量']
+y = data['人数']
 
 # 将天气情况、最高温度、最低温度、是否为假期和AQI作为特征变量
-X = data[['天气情况', '最高温度', '最低温度', '是否为假期', 'AQI']]
+X = data[['天气', '最高气温', '最低气温', '风向', 'AQI']]
 
 # 划分训练集和测试集
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -47,14 +52,15 @@ y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).view(-1, 1)
 
 # 定义Keras模型
 model = Sequential()
-model.add(Dense(64, input_dim=X_train_tensor.shape[1], activation='relu'))
+model.add(Dense(5, input_dim=X_train_tensor.shape[1], activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # 定义PyTorch的优化器和损失函数
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-criterion = nn.MSELoss()
-
+# optimizer = optim.Adam(model.parameters(), lr=0.001)
+# criterion = nn.MSELoss()
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True) # 优化函数，设定学习率（lr）等参数
+model.compile(loss='categorical_crossentropy', optimizer=sgd, class_mode='categorical')
 
 # 定义Keras中的自定义回调函数来使用PyTorch的优化器和损失函数
 class PyTorchCallback(K.callbacks.Callback):
