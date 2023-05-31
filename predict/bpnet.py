@@ -9,9 +9,10 @@ from keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import regularizers
 
+
 # 加载数据
 df = pd.read_csv('result.csv')
-x = df[['日期', '最高气温', '最低气温']].values
+x = df[['最高气温', '最低气温']].values
 y = df[['人数']].values
 
 # 数据归一化
@@ -19,10 +20,13 @@ x_scaler = MinMaxScaler(feature_range=(-1, 1))
 y_scaler = MinMaxScaler(feature_range=(-1, 1))
 x = x_scaler.fit_transform(x)
 y = y_scaler.fit_transform(y)
+# scaler = MinMaxScaler()
+# x = scaler.fit_transform(x)
+# y = scaler.fit_transform(y)
 
 # 定义神经网络模型
 model = Sequential()
-model.add(Dense(3, activation='relu', input_shape=(3,), kernel_regularizer=regularizers.l2(0.01)))
+model.add(Dense(10, activation='relu', input_shape=(2,), kernel_regularizer=regularizers.l2(0.01)))
 model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
 model.add(Dense(1, activation='linear'))
 
@@ -31,7 +35,7 @@ optimizer = Adam(lr=0.0001)
 model.compile(optimizer=optimizer, loss='mse')
 
 # 训练模型
-history = model.fit(x, y, epochs=10, batch_size=8)
+history = model.fit(x, y, epochs=20, batch_size=8)
 
 # 评估模型
 mse = model.evaluate(x, y)
