@@ -12,7 +12,7 @@ from keras.layers import Dense
 from keras import backend as K
 from keras.optimizers import SGD
 
-from predict.bpnet import optimizer
+# from predict.bpnet import optimizer
 
 # 读取数据
 # data = pd.read_excel('dataset.xls')
@@ -57,10 +57,10 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # 定义PyTorch的优化器和损失函数
-# optimizer = optim.Adam(model.parameters(), lr=0.001)
-# criterion = nn.MSELoss()
-sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True) # 优化函数，设定学习率（lr）等参数
-model.compile(loss='categorical_crossentropy', optimizer=sgd, class_mode='categorical')
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+criterion = nn.MSELoss()
+# sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True) # 优化函数，设定学习率（lr）等参数
+# model.compile(loss='categorical_crossentropy', optimizer=sgd, class_mode='categorical')
 
 # 定义Keras中的自定义回调函数来使用PyTorch的优化器和损失函数
 class PyTorchCallback(K.callbacks.Callback):
