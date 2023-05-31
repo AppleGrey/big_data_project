@@ -20,14 +20,11 @@ x_scaler = MinMaxScaler(feature_range=(-1, 1))
 y_scaler = MinMaxScaler(feature_range=(-1, 1))
 x = x_scaler.fit_transform(x)
 y = y_scaler.fit_transform(y)
-# scaler = MinMaxScaler()
-# x = scaler.fit_transform(x)
-# y = scaler.fit_transform(y)
 
 # 定义神经网络模型
 model = Sequential()
-model.add(Dense(10, activation='relu', input_shape=(2,), kernel_regularizer=regularizers.l2(0.01)))
-model.add(Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.01)))
+model.add(Dense(2, activation='relu', input_shape=(2,)))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # 误差记录
@@ -35,7 +32,7 @@ optimizer = Adam(lr=0.0001)
 model.compile(optimizer=optimizer, loss='mse')
 
 # 训练模型
-history = model.fit(x, y, epochs=20, batch_size=8)
+history = model.fit(x, y, epochs=100, batch_size=64)
 
 # 评估模型
 mse = model.evaluate(x, y)

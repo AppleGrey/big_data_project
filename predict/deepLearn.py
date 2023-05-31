@@ -12,7 +12,6 @@ from keras.layers import Dense
 from keras import backend as K
 from keras.optimizers import SGD
 
-from predict.bpnet import optimizer
 
 # 读取数据
 # data = pd.read_excel('dataset.xls')
