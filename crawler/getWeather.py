@@ -39,7 +39,7 @@ with open('beijing.csv', 'a', newline='') as file:
                 writer.writerow(l)
 
             # s_data = pd.DataFrame()
-            # s_data['日期'] = dates  # 列名为’日期‘
+            # s_data['日期'] = dates  # 列名为’日期‘、
             # s_data['天气状况'] = conditions
             # s_data['气温'] = temp
             # l = [dates, conditions, temp]
