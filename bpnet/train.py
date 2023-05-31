@@ -12,11 +12,16 @@ from tensorflow.keras import regularizers
 
 # 加载数据
 df = pd.read_csv('result.csv')
-x = df[['最高气温', '最低气温']].values
+df = df[df['人数']>200]
+df["日期"] = pd.to_datetime(df["日期"], errors='coerce')
+df['月'] = df['日期'].dt.month
+df['日'] = df['日期'].dt.day
+df['天气'] = pd.factorize(df['天气'])[0]
+x = df[['最高气温', '最低气温','AQI','风向','月','日','天气','week']].values
 y = df[['人数']].values
 
-print(min(y))
-print(max(y))
+# print(min(y))
+# print(max(y))
 
 # 数据归一化
 x_scaler = MinMaxScaler(feature_range=(-1, 1))
@@ -26,12 +31,15 @@ y = y_scaler.fit_transform(y)
 
 # 定义神经网络模型
 model = Sequential()
-model.add(Dense(2, activation='relu', input_shape=(2,)))
+model.add(Dense(16, activation='relu', input_shape=(8,)))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(512, activation='relu'))
+model.add(Dense(128, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # 误差记录
-optimizer = Adam(lr=0.0001)
+optimizer = Adam(lr=0.001)
 model.compile(optimizer=optimizer, loss='mse')
 
 # 训练模型
