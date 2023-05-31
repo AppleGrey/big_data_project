@@ -3,22 +3,30 @@ from bs4 import BeautifulSoup
 import csv
 import time
 import random
+import logging
+
+# 加载日志模块
+logging.basicConfig(filename='weather_log.txt', level=logging.INFO,
+                    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
 
 with open('beijing.csv', 'a', newline='') as file:
+    logging.info("程序成功运行")
     writer = csv.writer(file)
-    for year in range(2017,2024):
-        for month in range(1,13):
-            url = "http://www.tianqihoubao.com/lishi/beijing/month/{}.html".format(str(year)+str(month).zfill(2))
+    for year in range(2017, 2024):
+        for month in range(1, 13):
+            url = "http://www.tianqihoubao.com/lishi/beijing/month/{}.html".format(str(year) + str(month).zfill(2))
+            logging.info("-网页加载中")
             try:
                 resp = requests.get(url)
                 # print(resp)
                 pass
             except Exception as e:
                 # print(e)
-                # logging.error("获取网页失败，将休息10秒")
+                logging.error("获取网页失败，将休息10秒")
                 time.sleep(10)
                 resp = requests.get(url)
                 pass
+            logging.info("-网页加载成功")
             html = resp.content.decode('gbk')
 
             soup = BeautifulSoup(html, 'html.parser')
@@ -35,7 +43,7 @@ with open('beijing.csv', 'a', newline='') as file:
                 con = ''.join(sub_data[1:3])
                 temp.append(''.join(sub_data[3:6]))
                 t = ''.join(sub_data[3:6])
-                l = [dat,con,t]
+                l = [dat, con, t]
                 writer.writerow(l)
 
             # s_data = pd.DataFrame()
@@ -44,9 +52,9 @@ with open('beijing.csv', 'a', newline='') as file:
             # s_data['气温'] = temp
             # l = [dates, conditions, temp]
             # writer.writerow(l)
-            print(str(year)+str(month).zfill(2)+"爬取成功")
+            logging.info(str(year) + str(month).zfill(2) + "爬取成功")
 
-            if month%3==0 :
+            if month % 3 == 0:
                 x = random.randint(3, 6)
+                logging.info("-睡眠{}秒".format(x))
                 time.sleep(x)
-
