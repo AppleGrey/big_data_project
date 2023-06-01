@@ -1,4 +1,6 @@
 # 导入库
+import datetime
+
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
@@ -15,8 +17,10 @@ from tensorflow.keras import regularizers
 
 # 加载数据
 df = pd.read_csv('result.csv')
-df = df[df['人数']>200]
+df = df[df['人数']>600]
 df["日期"] = pd.to_datetime(df["日期"], errors='coerce')
+# df.filter(df['日期']>datetime.date(2021,1,1))
+df = df[(df['日期'].dt.date>datetime.datetime.strptime('20230101', '%Y%m%d').date()) | (df['日期'].dt.date<datetime.datetime.strptime('20200101', '%Y%m%d').date())]
 df['月'] = df['日期'].dt.month
 df['日'] = df['日期'].dt.day
 df['天气'] = pd.factorize(df['天气'])[0]
@@ -36,22 +40,19 @@ x, x_test, y, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
 # 定义神经网络模型
 model = Sequential()
-model.add(Dense(64, activation='relu', input_shape=(8,)))
-model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu', input_shape=(8,)))
 model.add(Dense(8, activation='relu'))
-# model.add(Dense(512, activation='relu'))
-# model.add(Dense(16, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
 # 误差记录
-# optimizer = Adam(lr=0.003)
-optimizer=SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+optimizer = Adam(0.0001)
+# optimizer=SGD(lr=0.01, decay=0.00001, momentum=0.9, nesterov=True)
 # model.compile(optimizer=optimizer, loss='mse')
 model.compile(optimizer=optimizer, loss='mse')
 # model.compile(loss='categorical_crossentropy', optimizer=sgd, class_mode='categorical')
 
 # 训练模型
-history = model.fit(x, y, epochs=1000, batch_size=64)
+history = model.fit(x, y, epochs=300, batch_size=1)
 
 
 # 评估模型
